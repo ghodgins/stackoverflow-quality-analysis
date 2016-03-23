@@ -1,3 +1,10 @@
+# ignore custom folders
+data/
+
+#
+# Below are entries from the default Github python .gitignore
+#
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

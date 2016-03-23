@@ -1,0 +1,118 @@
+$ 7z l stackoverflow.com-Posts.7z
+
+7-Zip [64] 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18
+p7zip Version 9.20 (locale=en_IE.UTF-8,Utf16=on,HugeFiles=on,8 CPUs)
+
+Listing archive: stackoverflow.com-Posts.7z
+
+--
+Path = stackoverflow.com-Posts.7z
+Type = 7z
+Method = BZip2
+Solid = -
+Blocks = 1
+Physical Size = 8512952500
+Headers Size = 122
+
+   Date      Time    Attr         Size   Compressed  Name
+------------------- ----- ------------ ------------  ------------------------
+2016-01-04 16:27:37 ....A  42327180776   8512952378  Posts.xml
+------------------- ----- ------------ ------------  ------------------------
+                           42327180776   8512952378  1 files, 0 folders
+
+
+
+
+$ 7z e stackoverflow.com-Posts.7z
+
+7-Zip [64] 9.20  Copyright (c) 1999-2010 Igor Pavlov  2010-11-18
+p7zip Version 9.20 (locale=en_IE.UTF-8,Utf16=on,HugeFiles=on,8 CPUs)
+
+Processing archive: stackoverflow.com-Posts.7z
+
+Extracting  Posts.xml
+
+Everything is Ok
+
+Size:       42327180776
+Compressed: 8512952500
+
+
+Operation took about 23 minutes!
+
+
+
+$ sudo su - postgres
+[sudo] password for ghodgins:
+postgres@ghodgins-XPS-15-9530:~$ psql
+psql (9.4.6)
+Type "help" for help.
+
+postgres=# \conninfo
+You are connected to database "postgres" as user "postgres" via socket in "/var/run/postgresql" at port "5432".
+
+
+$ python3.5 PostsXML2Postgres.py
+Pre-processing took 0.024108409881591797 seconds.
+Table processing took 3271.9207253456116 seconds.
+Post processing took 680.9141328334808 seconds.
+
+
+Before making feature generation parallel, N = 1000:
+$ python QuestionQualityAnalysis.py
+Loading data took 0.0953207015991211 seconds.
+Generating features took 145.76113748550415 seconds.
+Fit transform took 0.047506093978881836 seconds.
+Cross Validation splitting took 0.002116680145263672 seconds.
+Model Training took 0.10965991020202637 seconds.
+Model Scoring took 0.1038215160369873 seconds.
+Score = 0.315357142857
+
+
+After making feature generation parallel:
+$ python QuestionQualityAnalysis.py
+Loading data took 0.09184694290161133 seconds.
+Generating features took 39.1981201171875 seconds.
+Fit transform took 0.06460237503051758 seconds.
+Cross Validation splitting took 0.0019593238830566406 seconds.
+Model Training took 0.10802388191223145 seconds.
+Model Scoring took 0.10419631004333496 seconds.
+Score = 0.308571428571
+
+$ python QuestionQualityAnalysis.py
+Loading data took 0.09366655349731445 seconds.
+Generating features took 38.14906549453735 seconds.
+Fit transform took 0.06659770011901855 seconds.
+Cross Validation splitting took 0.0020918846130371094 seconds.
+Model Training took 0.10821723937988281 seconds.
+Model Scoring took 0.10364127159118652 seconds.
+Score = 0.305357142857
+
+$ python QuestionQualityAnalysis.py
+Loading data took 1.0091402530670166 seconds.
+Generating features took 415.3134460449219 seconds.
+Fit transform took 0.6390421390533447 seconds.
+Cross Validation splitting took 0.017322301864624023 seconds.
+Model Training took 0.4125192165374756 seconds.
+Model Scoring took 0.11722064018249512 seconds.
+Score = 0.326107142857
+
+
+$ python QuestionQualityAnalysis.py
+Loading data took 0.18519878387451172 seconds.
+Generating features took 80.26403784751892 seconds.
+Fit transform took 0.13132762908935547 seconds.
+Normalising took 0.002032041549682617 seconds.
+Cross Validation splitting took 0.003276348114013672 seconds.
+Model Training took 100.1265664100647 seconds.
+Predicting took 2.9347221851348877 seconds.
+Model Scoring took 0.004643678665161133 seconds.
+
+             precision    recall  f1-score   support
+
+        bad       0.30      0.27      0.29       607
+       good       0.33      0.31      0.32       608
+    verybad       0.40      0.42      0.41       607
+   verygood       0.37      0.41      0.39       578
+
+avg / total       0.35      0.35      0.35      2400
