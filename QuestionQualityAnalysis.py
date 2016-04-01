@@ -7,22 +7,35 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn import preprocessing
 from sklearn.metrics import classification_report
 import numpy as np
+import matplotlib.pyplot as plt
 import StackOverflowTextAnalysis as sota
 from itertools import islice
 import time
-import multiprocessing
 import concurrent.futures
+from sklearn.metrics import confusion_matrix
 
-def create_and_generate_features(body):
-    return sota.StackOverflowTextAnalysis(body).generate_features()
+
+def plot_confusion_matrix(cm, labels, title='Confusion matrix', cmap=plt.cm.Blues):
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(labels))
+    plt.xticks(tick_marks, labels, rotation=45)
+    plt.yticks(tick_marks, labels)
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+
 
 if __name__ == '__main__':
+    labels = ['verybad', 'bad', 'good', 'verygood']
+
     verybad_head = []
     bad_head = []
     good_head = []
     verygood_head = []
 
-    N = 2000
+    N = 1000
 
     start_time = time.time()
 
@@ -53,14 +66,8 @@ if __name__ == '__main__':
 
     start_feature_generation_time = time.time()
 
-    p = multiprocessing.Pool()
-
-    # features = [
-    #     sota.StackOverflowTextAnalysis(body).generate_features() for body in bodies
-    # ]
-
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        features = executor.map(create_and_generate_features, bodies)
+    with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+        features = executor.map(sota.create_and_generate_features, bodies)
 
     finished_feature_generation_time = time.time()
 
@@ -136,6 +143,8 @@ if __name__ == '__main__':
         )
     )
 
+    print(clf.feature_importances_)
+
     start_scoring_time = time.time()
 
     # score = clf.score(X_test, Y_test)
@@ -151,3 +160,21 @@ if __name__ == '__main__':
     # print("Score =", score)
 
     print(report)
+
+    # Compute confusion matrix
+    cm = confusion_matrix(Y_test, predicted)
+    np.set_printoptions(precision=2)
+    print('Confusion matrix, without normalization')
+    print(cm)
+    plt.figure()
+    plot_confusion_matrix(cm, labels)
+
+    # Normalize the confusion matrix by row (i.e by the number of samples
+    # in each class)
+    cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+    print('Normalized confusion matrix')
+    print(cm_normalized)
+    plt.figure()
+    plot_confusion_matrix(cm_normalized, labels, title='Normalized confusion matrix')
+
+    plt.show()

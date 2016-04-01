@@ -1,5 +1,6 @@
 # ignore custom folders
 data/
+graphs/
 
 #
 # Below are entries from the default Github python .gitignore

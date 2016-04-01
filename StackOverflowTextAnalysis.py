@@ -8,6 +8,10 @@ from enchant.checker import SpellChecker
 import re
 
 
+def create_and_generate_features(body):
+    return StackOverflowTextAnalysis(body).generate_features()
+
+
 class StackOverflowTextAnalysis(object):
     def __init__(self, body):
         self.body = body
@@ -38,6 +42,9 @@ class StackOverflowTextAnalysis(object):
         self.url_count = None
         self.emails = None
         self.email_count = None
+        self.lowercase_percentage = None
+        self.uppercase_percentage = None
+        self.spaces_count = None
 
         # regex to find strings of the form example@mail.com
         # unfortunately also matches urls such as //ex@mple.com
@@ -82,7 +89,10 @@ class StackOverflowTextAnalysis(object):
             "sota_smog_index": self.get_smog_index(),
             "sota_coleman_liau_index": self.get_coleman_liau_index(),
             "sota_lix": self.get_lix(),
-            "sota_rix": self.get_rix()
+            "sota_rix": self.get_rix(),
+            "sota_uppercase_percentage": self.get_uppercase_percentage(),
+            "sota_lowercase_percentage": self.get_lowercase_percentage(),
+            "sota_spaces_count": self.get_spaces_count()
         }
 
     def get_body(self):
@@ -207,7 +217,7 @@ class StackOverflowTextAnalysis(object):
             ) + 3
         return self.smog_index
 
-    def smog_grade():
+    def get_smog_grade(self):
         pass
 
     def get_coleman_liau_index(self):
@@ -228,38 +238,55 @@ class StackOverflowTextAnalysis(object):
             self.rix = self.get_long_word_count() / self.get_sentence_count()
         return self.rix
 
-    def lowercase_percentage():
-        pass
+    def get_lowercase_percentage(self):
+        if self.lowercase_percentage is None:
+            lowercase_count = 0
+            for character in self.get_body_text():
+                if character.islower():
+                    lowercase_count += 1
+            self.lowercase_percentage = (lowercase_count/len(self.get_body_text()))*100
+        return self.lowercase_percentage
 
-    def uppercase_percentage():
-        pass
+    def get_uppercase_percentage(self):
+        if self.uppercase_percentage is None:
+            uppercase_count = 0
+            for character in self.get_body_text():
+                if character.isupper():
+                    uppercase_count += 1
+            self.uppercase_percentage = (uppercase_count/len(self.get_body_text()))*100
+        return self.uppercase_percentage
 
-    def spaces_count():
-        pass
+    def get_spaces_count(self):
+        if self.spaces_count is None:
+            self.spaces_count = 0
+            for character in self.get_body_text():
+                if character.isspace():
+                    self.spaces_count += 1
+        return self.spaces_count
 
-    def text_speak_count():
+    def text_speak_count(self):
         # this or spellcheck errors count???
         pass
 
-    def title_body_similarity():
+    def title_body_similarity(self):
         pass
 
-    def title_length():
+    def title_length(self):
         pass
 
-    def is_title_capitalized():
+    def is_title_capitalized(self):
         pass
 
-    def avg_term_entropy():
+    def avg_term_entropy(self):
         # avg entropy of terms in a question,
         # according to the SO entropy index we devised.
         # Each term’s entropy is calculated on the SO dataset.
         pass
 
-    def lines_of_code():
+    def lines_of_code(self):
         pass
 
-    def lines_of_code_percentage():
+    def lines_of_code_percentage(self):
         # percentage of lines of code declared between tags <code>
         pass
 
