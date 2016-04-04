@@ -7,6 +7,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn import preprocessing
 from sklearn.metrics import classification_report
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import StackOverflowTextAnalysis as sota
 from itertools import islice
@@ -41,21 +42,41 @@ if __name__ == '__main__':
 
     with open('data/answers-verybad.csv') as verybad_file:
         verybad = islice(csv.DictReader(verybad_file), N)
-        verybad_head = [row['body'] for row in verybad]
+        verybad_head = [
+            {
+                'body': row['body']
+            }
+            for row in verybad
+        ]
 
     with open('data/answers-bad.csv') as bad_file:
         bad = islice(csv.DictReader(bad_file), N)
-        bad_head = [row['body'] for row in bad]
+        bad_head = [
+            {
+                'body': row['body']
+            }
+            for row in bad
+        ]
 
     with open('data/answers-good.csv') as good_file:
         good = islice(csv.DictReader(good_file), N)
-        good_head = [row['body'] for row in good]
+        good_head = [
+            {
+                'body': row['body']
+            }
+            for row in good
+        ]
 
     with open('data/answers-verygood.csv') as verygood_file:
         verygood = islice(csv.DictReader(verygood_file), N)
-        verygood_head = [row['body'] for row in verygood]
+        verygood_head = [
+            {
+                'body': row['body']
+            }
+            for row in verygood
+        ]
 
-    bodies = verybad_head + bad_head + good_head + verygood_head
+    answers = verybad_head + bad_head + good_head + verygood_head
 
     finished_loading_time = time.time()
 
@@ -67,7 +88,7 @@ if __name__ == '__main__':
     start_feature_generation_time = time.time()
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
-        features = executor.map(sota.create_and_generate_features, bodies)
+        features = executor.map(sota.create_and_generate_features, answers)
 
     finished_feature_generation_time = time.time()
 
@@ -92,21 +113,8 @@ if __name__ == '__main__':
         )
     )
 
-    start_normalising_time = time.time()
-
-    X = preprocessing.maxabs_scale(X)
-
-    finished_normalising_time = time.time()
-
-    print("Normalising took {} seconds.".format(
-        finished_normalising_time - start_normalising_time
-        )
-    )
-
     Y = ['verybad'] * len(verybad_head) + ['bad'] * len(bad_head) + \
         ['good'] * len(good_head) + ['verygood'] * len(verygood_head)
-
-    # print(X.shape)
 
     start_splitting_time = time.time()
 
@@ -117,6 +125,17 @@ if __name__ == '__main__':
 
     print("Cross Validation splitting took {} seconds.".format(
         finished_splitting_time - start_splitting_time
+        )
+    )
+
+    start_normalising_time = time.time()
+
+    X = preprocessing.maxabs_scale(X)
+
+    finished_normalising_time = time.time()
+
+    print("Normalising took {} seconds.".format(
+        finished_normalising_time - start_normalising_time
         )
     )
 
@@ -159,6 +178,8 @@ if __name__ == '__main__':
 
     print(report)
 
+    matplotlib.rcParams.update({'font.size': 22})
+
     # Compute confusion matrix
     cm = confusion_matrix(Y_test, predicted)
     np.set_printoptions(precision=2)
@@ -174,5 +195,24 @@ if __name__ == '__main__':
     print(cm_normalized)
     plt.figure()
     plot_confusion_matrix(cm_normalized, labels, title='Normalized confusion matrix')
+
+    importances = clf.feature_importances_
+    std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
+    indices = np.argsort(importances)[::-1]
+    feature_names = np.array([w[5:] for w in vectorizer.get_feature_names()])
+
+    # Print the feature ranking
+    print("Feature ranking:")
+    for f in range(X.shape[1]):
+        print("%d. %s (%f)" % (f + 1, feature_names[indices[f]], importances[indices[f]]))
+
+    # Plot the feature importances of the forest
+    plt.figure()
+    plt.title("Feature importances")
+    plt.bar(range(X.shape[1]), importances[indices],
+           color="r", yerr=std[indices], align="center")
+    plt.xticks(range(X.shape[1]), feature_names[indices], rotation='30')
+    plt.xlim([-1, X.shape[1]])
+
 
     plt.show()

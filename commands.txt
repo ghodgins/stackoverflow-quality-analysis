@@ -181,3 +181,238 @@ Normalized confusion matrix
  [ 0.25  0.17  0.34  0.23]
  [ 0.16  0.27  0.19  0.39]]
 
+
+
+
+# n = 1000 With oob, random_state etc on
+$ python QuestionQualityAnalysis.py
+Loading data took 0.1365816593170166 seconds.
+Generating features took 54.44051551818848 seconds.
+Fit transform took 0.10778498649597168 seconds.
+Normalising took 0.002268552780151367 seconds.
+Cross Validation splitting took 0.002957582473754883 seconds.
+Model Training took 29.2546124458313 seconds.
+Predicting took 3.097747325897217 seconds.
+[ 0.06910394  0.12693455  0.08637988  0.          0.05252175  0.05352537
+  0.0645254   0.06195178  0.10284686  0.07086196  0.10007613  0.09476631
+  0.03575192  0.04750708  0.03324705]
+Model Scoring took 0.0031211376190185547 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.37      0.14      0.21       315
+       good       0.31      0.31      0.31       299
+    verybad       0.37      0.53      0.43       303
+   verygood       0.39      0.46      0.42       283
+
+avg / total       0.36      0.36      0.34      1200
+
+Confusion matrix, without normalization
+[[ 45  73 134  63]
+ [ 24  93  79 103]
+ [ 35  64 161  43]
+ [ 17  69  66 131]]
+Normalized confusion matrix
+[[ 0.14  0.23  0.43  0.2 ]
+ [ 0.08  0.31  0.26  0.34]
+ [ 0.12  0.21  0.53  0.14]
+ [ 0.06  0.24  0.23  0.46]]
+
+
+# n = 2000 Not normalized
+$ python QuestionQualityAnalysis.py
+Loading data took 0.19028139114379883 seconds.
+Generating features took 95.89387822151184 seconds.
+Fit transform took 0.15649724006652832 seconds.
+Normalising took 3.0994415283203125e-06 seconds.
+Cross Validation splitting took 0.003696441650390625 seconds.
+Model Training took 42.47352480888367 seconds.
+Predicting took 2.8300647735595703 seconds.
+[ 0.05814477  0.15161838  0.06521979  0.          0.04762603  0.04735995
+  0.0547318   0.05487492  0.10179885  0.05589148  0.08188593  0.10615769
+  0.05876268  0.04973526  0.06619246]
+Model Scoring took 0.0038836002349853516 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.37      0.16      0.22       607
+       good       0.34      0.30      0.32       608
+    verybad       0.41      0.56      0.47       607
+   verygood       0.39      0.53      0.45       578
+
+avg / total       0.38      0.38      0.36      2400
+
+Confusion matrix, without normalization
+[[ 97 142 221 147]
+ [ 62 181 128 237]
+ [ 69 111 337  90]
+ [ 37  98 136 307]]
+Normalized confusion matrix
+[[ 0.16  0.23  0.36  0.24]
+ [ 0.1   0.3   0.21  0.39]
+ [ 0.11  0.18  0.56  0.15]
+ [ 0.06  0.17  0.24  0.53]]
+
+
+
+4/4/2016
+N = 2000, just added title and code features
+$ python QuestionQualityAnalysis.py
+Loading data took 0.20033478736877441 seconds.
+Generating features took 131.16524934768677 seconds.
+Fit transform took 0.19899749755859375 seconds.
+Cross Validation splitting took 0.008873701095581055 seconds.
+Normalising took 0.006024837493896484 seconds.
+Model Training took 52.46295499801636 seconds.
+Predicting took 2.932734966278076 seconds.
+Model Scoring took 0.004177570343017578 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.35      0.19      0.25       600
+       good       0.35      0.36      0.35       600
+    verybad       0.41      0.53      0.46       600
+   verygood       0.40      0.46      0.43       600
+
+avg / total       0.38      0.38      0.37      2400
+
+Confusion matrix, without normalization
+[[113 147 213 127]
+ [ 57 215 131 197]
+ [ 99  96 316  89]
+ [ 53 159 113 275]]
+Normalized confusion matrix
+[[ 0.19  0.24  0.35  0.21]
+ [ 0.1   0.36  0.22  0.33]
+ [ 0.17  0.16  0.53  0.15]
+ [ 0.09  0.27  0.19  0.46]]
+
+$ python AnswerQualityAnalysis.py
+Loading data took 0.06577658653259277 seconds.
+Generating features took 61.82828998565674 seconds.
+Fit transform took 0.19047260284423828 seconds.
+Normalising took 0.0037615299224853516 seconds.
+Cross Validation splitting took 0.004629373550415039 seconds.
+Model Training took 64.81164193153381 seconds.
+Predicting took 3.208529472351074 seconds.
+Model Scoring took 0.0025663375854492188 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.27      0.21      0.24       315
+       good       0.32      0.31      0.31       299
+    verybad       0.33      0.36      0.34       303
+   verygood       0.36      0.43      0.39       283
+
+avg / total       0.32      0.32      0.32      1200
+
+Confusion matrix, without normalization
+[[ 67  76 108  64]
+ [ 60  93  64  82]
+ [ 76  51 108  68]
+ [ 41  74  47 121]]
+Normalized confusion matrix
+[[ 0.21  0.24  0.34  0.2 ]
+ [ 0.2   0.31  0.21  0.27]
+ [ 0.25  0.17  0.36  0.22]
+ [ 0.14  0.26  0.17  0.43]]
+
+
+
+
+
+$ python QuestionQualityAnalysis.py
+Loading data took 0.10056471824645996 seconds.
+Generating features took 55.71040368080139 seconds.
+Fit transform took 0.10684967041015625 seconds.
+Cross Validation splitting took 0.004657268524169922 seconds.
+Normalising took 0.002321004867553711 seconds.
+Model Training took 2.9922428131103516 seconds.
+Predicting took 0.31032800674438477 seconds.
+Model Scoring took 0.0026051998138427734 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.32      0.11      0.17       300
+       good       0.33      0.41      0.36       300
+    verybad       0.39      0.52      0.45       300
+   verygood       0.41      0.44      0.42       300
+
+avg / total       0.36      0.37      0.35      1200
+
+Confusion matrix, without normalization
+[[ 34 107 108  51]
+ [ 28 124  64  84]
+ [ 30  63 155  52]
+ [ 15  87  67 131]]
+Normalized confusion matrix
+[[ 0.11  0.36  0.36  0.17]
+ [ 0.09  0.41  0.21  0.28]
+ [ 0.1   0.21  0.52  0.17]
+ [ 0.05  0.29  0.22  0.44]]
+Feature ranking:
+1. body_length (0.132422)
+2. spaces_count (0.098979)
+3. smog_index (0.074445)
+4. code_percentage (0.063563)
+5. coleman_liau_index (0.063469)
+6. lowercase_percentage (0.060619)
+7. title_length (0.058072)
+8. ari (0.055087)
+9. gunning_fog_index (0.054666)
+10. rix (0.048956)
+11. lix (0.042101)
+12. url_count (0.039966)
+13. title_body_similarity (0.038802)
+14. uppercase_percentage (0.035141)
+15. flesch_reading_ease (0.035019)
+16. flesch_kincaid_grade (0.034460)
+17. lines_of_code (0.032905)
+18. spelling_error_count (0.027939)
+19. is_title_capitalized (0.003388)
+20. email_count (0.000000)
+
+
+
+
+$ python AnswerQualityAnalysis.py
+Loading data took 0.056900978088378906 seconds.
+Generating features took 44.62700915336609 seconds.
+Fit transform took 0.08669281005859375 seconds.
+Cross Validation splitting took 0.002217531204223633 seconds.
+Normalising took 0.001931905746459961 seconds.
+Model Training took 49.99820828437805 seconds.
+Predicting took 2.4886608123779297 seconds.
+Model Scoring took 0.0024378299713134766 seconds.
+             precision    recall  f1-score   support
+
+        bad       0.26      0.21      0.23       315
+       good       0.32      0.31      0.31       299
+    verybad       0.33      0.35      0.34       303
+   verygood       0.37      0.43      0.40       283
+
+avg / total       0.32      0.32      0.32      1200
+
+Confusion matrix, without normalization
+[[ 65  76 110  64]
+ [ 64  93  59  83]
+ [ 80  53 107  63]
+ [ 43  71  47 122]]
+Normalized confusion matrix
+[[ 0.21  0.24  0.35  0.2 ]
+ [ 0.21  0.31  0.2   0.28]
+ [ 0.26  0.17  0.35  0.21]
+ [ 0.15  0.25  0.17  0.43]]
+Feature ranking:
+1. body_length (0.087362)
+2. lowercase_percentage (0.078966)
+3. uppercase_percentage (0.078785)
+4. spaces_count (0.074418)
+5. coleman_liau_index (0.073303)
+6. ari (0.070209)
+7. lix (0.068689)
+8. gunning_fog_index (0.067668)
+9. flesch_kincaid_grade (0.063972)
+10. flesch_reading_ease (0.063650)
+11. code_percentage (0.058544)
+12. rix (0.053109)
+13. spelling_error_count (0.052380)
+14. smog_index (0.052354)
+15. lines_of_code (0.036011)
+16. url_count (0.019915)
+17. email_count (0.000666)

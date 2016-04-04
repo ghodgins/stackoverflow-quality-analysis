@@ -6,16 +6,22 @@ from bs4 import BeautifulSoup
 import nltk
 from enchant.checker import SpellChecker
 import re
+import string
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-def create_and_generate_features(body):
-    return StackOverflowTextAnalysis(body).generate_features()
+def create_and_generate_features(post):
+    return StackOverflowTextAnalysis(post).generate_features()
 
 
 class StackOverflowTextAnalysis(object):
-    def __init__(self, body):
-        self.body = body
+    def __init__(self, post):
+        self.body = post.get('body')
+        assert self.body is not None
+        self.title = post.get('title')
         self.body_length = None
+        self.title_body_similarity = None
+        self.title_length = None
         self.body_text = None
         self.words = None
         self.sentences = None
@@ -30,7 +36,7 @@ class StackOverflowTextAnalysis(object):
         self.avg_words_per_sentence = None
         self.ari = None
         self.flesch_reading_ease = None
-        self.flesch_kincaid_grade_level = None
+        self.flesch_kincaid_grade = None
         self.gunning_fog_index = None
         self.smog_index = None
         self.coleman_liau_index = None
@@ -45,6 +51,10 @@ class StackOverflowTextAnalysis(object):
         self.lowercase_percentage = None
         self.uppercase_percentage = None
         self.spaces_count = None
+        self.sentiment = None
+        self.is_title_capitalized = None
+        self.lines_of_code = None
+        self.code_percentage = None
 
         # regex to find strings of the form example@mail.com
         # unfortunately also matches urls such as //ex@mple.com
@@ -77,14 +87,14 @@ class StackOverflowTextAnalysis(object):
     # prepend sota (abbreviation of StackOverflowTextAnalysis) to each key to
     # ensure that they are unique when combined with other feature sets
     def generate_features(self):
-        return {
+        features = {
             "sota_body_length": self.get_body_length(),
             "sota_spelling_error_count": self.get_spelling_error_count(),
             "sota_email_count": self.get_email_count(),
             "sota_url_count": self.get_url_count(),
             "sota_ari": self.get_ari(),
             "sota_flesch_reading_ease": self.get_flesch_reading_ease(),
-            "sota_flesch_kincaid_grade_level": self.get_flesch_kincaid_grade_level(),
+            "sota_flesch_kincaid_grade": self.get_flesch_kincaid_grade(),
             "sota_gunning_fog_index": self.get_gunning_fog_index(),
             "sota_smog_index": self.get_smog_index(),
             "sota_coleman_liau_index": self.get_coleman_liau_index(),
@@ -92,11 +102,28 @@ class StackOverflowTextAnalysis(object):
             "sota_rix": self.get_rix(),
             "sota_uppercase_percentage": self.get_uppercase_percentage(),
             "sota_lowercase_percentage": self.get_lowercase_percentage(),
-            "sota_spaces_count": self.get_spaces_count()
+            "sota_spaces_count": self.get_spaces_count(),
+            "sota_lines_of_code": self.get_lines_of_code(),
+            "sota_code_percentage": self.get_code_percentage()
+            #"sota_sentiment": self.get_sentiment()
         }
+
+        if self.get_title() is not None:
+            title_features = {
+                "sota_title_length": self.get_title_length(),
+                "sota_title_body_similarity": self.get_title_body_similarity(),
+                "sota_is_title_capitalized": self.get_is_title_capitalized()
+            }
+
+            features = {**features, **title_features}
+
+        return features
 
     def get_body(self):
         return self.body
+
+    def get_title(self):
+        return self.title
 
     def get_body_text(self):
         if self.body_text is None:
@@ -132,6 +159,11 @@ class StackOverflowTextAnalysis(object):
         if self.body_length is None:
             self.body_length = len(self.get_body_text())
         return self.body_length
+
+    def get_title_length(self):
+        if self.title_length is None:
+            self.title_length = len(self.get_title())
+        return self.title_length
 
     def get_long_word_count(self):
         if self.long_word_count is None:
@@ -192,7 +224,7 @@ class StackOverflowTextAnalysis(object):
             )
         return self.flesch_reading_ease
 
-    def get_flesch_kincaid_grade_level(self):
+    def get_flesch_kincaid_grade(self):
         if self.flesch_reading_ease is None:
             self.flesch_reading_ease = 0.39 * self.get_avg_words_per_sentence() + 11.8 * \
                 (self.get_total_syllable_count() / self.get_word_count()) - 15.59
@@ -224,7 +256,7 @@ class StackOverflowTextAnalysis(object):
         if self.coleman_liau_index is None:
             self.coleman_liau_index = (
                 5.89 * self.get_character_count() / self.get_word_count()) - (
-                30 * (self.get_sentence_count() / self.get_word_count())) - 15.8
+                30 * (self.get_sentence_count()/self.get_word_count())) - 15.8
         return self.coleman_liau_index
 
     def get_lix(self):
@@ -244,7 +276,8 @@ class StackOverflowTextAnalysis(object):
             for character in self.get_body_text():
                 if character.islower():
                     lowercase_count += 1
-            self.lowercase_percentage = (lowercase_count/len(self.get_body_text()))*100
+            self.lowercase_percentage = (
+                lowercase_count/len(self.get_body_text()))*100
         return self.lowercase_percentage
 
     def get_uppercase_percentage(self):
@@ -253,7 +286,8 @@ class StackOverflowTextAnalysis(object):
             for character in self.get_body_text():
                 if character.isupper():
                     uppercase_count += 1
-            self.uppercase_percentage = (uppercase_count/len(self.get_body_text()))*100
+            self.uppercase_percentage = (
+                uppercase_count/len(self.get_body_text()))*100
         return self.uppercase_percentage
 
     def get_spaces_count(self):
@@ -264,34 +298,38 @@ class StackOverflowTextAnalysis(object):
                     self.spaces_count += 1
         return self.spaces_count
 
+    def get_sentiment(self):
+        if self.sentiment is None:
+            self.sentiment = None
+        return self.sentiment
+
     def text_speak_count(self):
         # this or spellcheck errors count???
         pass
 
-    def title_body_similarity(self):
-        pass
+    def get_title_body_similarity(self):
+        if self.title_body_similarity is None:
+            self.title_body_similarity = self.cosine_sim(
+                self.get_title(), self.get_body_text()
+            )
+        return self.title_body_similarity
 
-    def title_length(self):
-        pass
+    def get_lines_of_code(self):
+        # number of lines of code declared between tags <code>
+        bs = BeautifulSoup(self.get_body(), "lxml")
+        code = bs.find_all('code')
+        return ' '.join([c.get_text() for c in code]).count('\n')+1
 
-    def is_title_capitalized(self):
-        pass
-
-    def avg_term_entropy(self):
-        # avg entropy of terms in a question,
-        # according to the SO entropy index we devised.
-        # Each term’s entropy is calculated on the SO dataset.
-        pass
-
-    def lines_of_code(self):
-        pass
-
-    def lines_of_code_percentage(self):
+    def get_code_percentage(self):
         # percentage of lines of code declared between tags <code>
-        pass
+        lines_of_code = self.get_lines_of_code()
+        lines_of_text = self.get_body().count('\n')+1
+        return (lines_of_code/lines_of_text)*100
 
-    def metric_entropy():
-        pass
+    def get_is_title_capitalized(self):
+        if self.is_title_capitalized is None:
+            self.is_title_capitalized = self.get_title()[0].isupper()
+        return self.is_title_capitalized
 
     def get_email_count(self):
         if self.email_count is None:
@@ -329,3 +367,26 @@ class StackOverflowTextAnalysis(object):
         if self.spelling_error_count is None:
             self.spelling_error_count = len(self.find_spelling_errors())
         return self.spelling_error_count
+
+    def stem_tokens(self, tokens):
+        stemmer = nltk.stem.porter.PorterStemmer()
+        return [stemmer.stem(item) for item in tokens]
+
+    '''remove punctuation, lowercase, stem'''
+    def normalize(self, text):
+        remove_punctuation_map = dict((ord(char), None) for char in string.punctuation)
+        return self.stem_tokens(nltk.word_tokenize(text.lower().translate(remove_punctuation_map)))
+
+    def cosine_sim(self, text1, text2):
+        vectorizer = TfidfVectorizer(tokenizer=self.normalize, stop_words='english')
+        tfidf = vectorizer.fit_transform([text1, text2])
+        return ((tfidf * tfidf.T).A)[0, 1]
+
+    def avg_term_entropy(self):
+        # avg entropy of terms in a question,
+        # according to the SO entropy index we devised.
+        # Each term’s entropy is calculated on the SO dataset.
+        pass
+
+    def metric_entropy():
+        pass
