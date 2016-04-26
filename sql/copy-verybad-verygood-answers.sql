@@ -8,7 +8,7 @@ COPY (
         creationdate < timestamp '2016-01-01 00:00:00' and
         posttypeid = 2 and
         lasteditdate is null and
-        score <= -3 and
+        score <= -2 and
         parentid in (
             select id
             from posts
@@ -21,8 +21,8 @@ COPY (
     order by RANDOM()
 ) TO '/tmp/answers-verybad.csv' WITH CSV HEADER;
 
-COPY 1165
-Time: 1611.266 ms
+COPY 4958
+Time: 2035.270 ms
 
 
 # Answers Bad
@@ -34,8 +34,7 @@ COPY (
         creationdate < timestamp '2016-01-01 00:00:00' and
         posttypeid = 2 and
         lasteditdate is null and
-        score < 0 and
-        score >= -2 and
+        score = -1 and
         parentid in (
             select id
             from posts
@@ -48,8 +47,8 @@ COPY (
     order by RANDOM()
 ) TO '/tmp/answers-bad.csv' WITH CSV HEADER;
 
-COPY 29448
-Time: 11079.005 ms
+COPY 25655
+Time: 2802.053 ms
 
 
 # Answers Good
@@ -62,6 +61,7 @@ COPY (
         posttypeid = 2 and
         lasteditdate is null and
         score > 0 and
+        score <= 6 and
         parentid in (
             select id
             from posts

@@ -1,6 +1,7 @@
 # ignore custom folders
 data/
 graphs/
+visualized_trees/
 
 #
 # Below are entries from the default Github python .gitignore

@@ -36,7 +36,7 @@ if __name__ == '__main__':
     good_head = []
     verygood_head = []
 
-    N = 1000
+    N = 4900
 
     start_time = time.time()
 
@@ -141,7 +141,11 @@ if __name__ == '__main__':
 
     start_model_training_time = time.time()
 
-    clf = RandomForestClassifier(n_estimators=10000, n_jobs=6)
+    clf = RandomForestClassifier(
+        n_estimators=1000, n_jobs=6, oob_score=True, random_state=50,
+        max_features="auto", min_samples_leaf=50
+    )
+
     clf = clf.fit(X_train, Y_train)
 
     finished_model_training_time = time.time()
@@ -165,7 +169,7 @@ if __name__ == '__main__':
     start_scoring_time = time.time()
 
     # score = clf.score(X_test, Y_test)
-    report = classification_report(Y_test, predicted)
+    report = classification_report(Y_test, predicted, labels)
 
     finished_scoring_time = time.time()
 
@@ -196,16 +200,18 @@ if __name__ == '__main__':
     plt.figure()
     plot_confusion_matrix(cm_normalized, labels, title='Normalized confusion matrix')
 
+
     importances = clf.feature_importances_
-    std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
+    #std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
     indices = np.argsort(importances)[::-1]
-    feature_names = np.array([w[5:] for w in vectorizer.get_feature_names()])
+    feature_names = np.array([w for w in vectorizer.get_feature_names()])
 
     # Print the feature ranking
     print("Feature ranking:")
-    for f in range(X.shape[1]):
+    for f in range(X.shape[1])[:100]:
         print("%d. %s (%f)" % (f + 1, feature_names[indices[f]], importances[indices[f]]))
 
+    '''
     # Plot the feature importances of the forest
     plt.figure()
     plt.title("Feature importances")
@@ -213,6 +219,6 @@ if __name__ == '__main__':
            color="r", yerr=std[indices], align="center")
     plt.xticks(range(X.shape[1]), feature_names[indices], rotation='30')
     plt.xlim([-1, X.shape[1]])
-
+    '''
 
     plt.show()

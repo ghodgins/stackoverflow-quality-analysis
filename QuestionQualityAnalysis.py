@@ -15,6 +15,9 @@ from itertools import islice
 import time
 import concurrent.futures
 from sklearn.metrics import confusion_matrix
+from sklearn.cross_validation import StratifiedKFold, permutation_test_score
+from scipy.sparse import csr_matrix
+from sklearn.tree import export_graphviz
 
 
 def plot_confusion_matrix(cm, labels, title='Confusion matrix', cmap=plt.cm.Blues):
@@ -45,7 +48,7 @@ if __name__ == '__main__':
     good_head = []
     verygood_head = []
 
-    N = 1000
+    N = 4000
 
     start_time = time.time()
 
@@ -95,8 +98,7 @@ if __name__ == '__main__':
 
     print("Loading data took {} seconds.".format(
         finished_loading_time - start_time
-    )
-    )
+    ))
 
     start_feature_generation_time = time.time()
 
@@ -107,17 +109,15 @@ if __name__ == '__main__':
 
     print("Generating features took {} seconds.".format(
         finished_feature_generation_time - start_feature_generation_time
-    )
-    )
+    ))
 
     start_fit_transform_time = time.time()
-
-    # tf = TfidfVectorizer()
-    # X = tf.fit_transform(bodies)
 
     vectorizer = DictVectorizer()
 
     X = vectorizer.fit_transform(features)
+
+    print(X.shape)
 
     finished_fit_transform_time = time.time()
 
@@ -125,8 +125,12 @@ if __name__ == '__main__':
         finished_fit_transform_time - start_fit_transform_time
     ))
 
-    Y = ['verybad'] * len(verybad_head) + ['bad'] * len(bad_head) + \
+    Y = np.array(
+        ['verybad'] * len(verybad_head) + ['bad'] * len(bad_head) + \
         ['good'] * len(good_head) + ['verygood'] * len(verygood_head)
+    )
+
+    print(Y.shape)
 
     start_splitting_time = time.time()
 
@@ -141,7 +145,7 @@ if __name__ == '__main__':
 
     start_normalising_time = time.time()
 
-    X = preprocessing.maxabs_scale(X)
+    #X = preprocessing.maxabs_scale(X)
     #scaler = preprocessing.MaxAbsScaler()
     #scaler = preprocessing.MinMaxScaler()
     #X_train = scaler.fit_transform(X_train.todense())
@@ -156,13 +160,43 @@ if __name__ == '__main__':
     start_model_training_time = time.time()
 
     clf = RandomForestClassifier(
-        n_estimators=10000, n_jobs=6, oob_score=True, random_state=50,
+        n_estimators=1000, n_jobs=6, oob_score=True, random_state=50,
         max_features="auto", min_samples_leaf=50
     )
 
-    #clf = MultinomialNB()
+    '''
+    cv = StratifiedKFold(Y)
 
-    #clf = svm.SVC(decision_function_shape='ovo')
+    score, permutation_scores, pvalue = permutation_test_score(
+        clf, X, Y, scoring="accuracy", cv=cv, n_permutations=50, n_jobs=3
+    )
+
+    print("Classification score %s (pvalue : %s)" % (score, pvalue))
+
+    print(permutation_scores)
+    '''
+
+    '''
+    ###############################################################################
+    # View histogram of permutation scores
+    plt.hist(permutation_scores, 20, label='Permutation scores')
+    ylim = plt.ylim()
+    # BUG: vlines(..., linestyle='--') fails on older versions of matplotlib
+    #plt.vlines(score, ylim[0], ylim[1], linestyle='--',
+    #          color='g', linewidth=3, label='Classification Score'
+    #          ' (pvalue %s)' % pvalue)
+    #plt.vlines(1.0 / n_classes, ylim[0], ylim[1], linestyle='--',
+    #          color='k', linewidth=3, label='Luck')
+    plt.plot(2 * [score], ylim, '--g', linewidth=3,
+             label='Classification Score'
+             ' (pvalue %s)' % pvalue)
+    plt.plot(2 * [1. / n_classes], ylim, '--k', linewidth=3, label='Luck')
+
+    plt.ylim(ylim)
+    plt.legend()
+    plt.xlabel('Score')
+    plt.show()
+    '''
 
     clf = clf.fit(X_train, Y_train)
 
@@ -171,6 +205,7 @@ if __name__ == '__main__':
     print("Model Training took {} seconds.".format(
         finished_model_training_time - start_model_training_time
     ))
+
 
     start_predicting_time = time.time()
 
@@ -184,7 +219,7 @@ if __name__ == '__main__':
 
     start_scoring_time = time.time()
 
-    report = classification_report(Y_test, predicted)
+    report = classification_report(Y_test, predicted, target_names=labels)
 
     finished_scoring_time = time.time()
 
@@ -194,9 +229,25 @@ if __name__ == '__main__':
 
     print(report)
 
-    #print_top10(vectorizer, clf, labels)
+    importances = clf.feature_importances_
+    #std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
+    indices = np.argsort(importances)[::-1]
+    feature_names = np.array([w for w in vectorizer.get_feature_names()])
 
-    matplotlib.rcParams.update({'font.size': 22})
+    for i, rf_tree in enumerate(clf.estimators_):
+        with open('./visualized_trees/' + 'tree_' + str(i) + '.dot', 'w') as dotfile:
+            export_graphviz(
+                rf_tree,
+                dotfile,
+                feature_names=feature_names
+            )
+
+    # Print the feature ranking
+    print("Feature ranking:")
+    for f in range(X.shape[1])[:100]:
+        print("%d. %s (%f)" % (f + 1, feature_names[indices[f]], importances[indices[f]]))
+
+    matplotlib.rcParams.update({'font.size': 32})
 
     # Compute confusion matrix
     cm = confusion_matrix(Y_test, predicted)
@@ -205,6 +256,7 @@ if __name__ == '__main__':
     print(cm)
     plt.figure()
     plot_confusion_matrix(cm, labels)
+    savefig('question_confusion_matrix.png', transparent=True, bbox_inches='tight')
 
     # Normalize the confusion matrix by row (i.e by the number of samples
     # in each class)
@@ -215,23 +267,30 @@ if __name__ == '__main__':
     plot_confusion_matrix(
         cm_normalized, labels, title='Normalized confusion matrix'
     )
+    savefig('question_confusion_matrix_normalized.png', transparent=True, bbox_inches='tight')
 
-    importances = clf.feature_importances_
-    std = np.std([tree.feature_importances_ for tree in clf.estimators_], axis=0)
-    indices = np.argsort(importances)[::-1]
-    feature_names = np.array([w[5:] for w in vectorizer.get_feature_names()])
+    top_importances = (importances[indices])[:35]
+    top_names = (feature_names[indices])[:35]
 
-    # Print the feature ranking
-    print("Feature ranking:")
-    for f in range(X.shape[1]):
-        print("%d. %s (%f)" % (f + 1, feature_names[indices[f]], importances[indices[f]]))
+    '''
+    # Plot the feature importances of the forest
+    plt.figure()
+    plt.title("Feature Importances")
+    plt.bar(range(len(top_importances)), top_importances,
+           color="#539DCC", ecolor='r', align="center") # yerr=std[indices],
+    plt.xticks(range(len(top_importances)), top_names, rotation='30')
+    plt.xlim([-1, len(top_importances)])
+    savefig('feature_importances.png', transparent=True, bbox_inches='tight')
+    '''
 
     # Plot the feature importances of the forest
     plt.figure()
-    plt.title("Feature importances")
-    plt.bar(range(X.shape[1]), importances[indices],
-           color="r", yerr=std[indices], align="center")
-    plt.xticks(range(X.shape[1]), feature_names[indices], rotation='30')
-    plt.xlim([-1, X.shape[1]])
+    plt.title("Feature Importances")
+    plt.barh(range(len(top_importances)), top_importances,
+           color='#539DCC', ecolor='r', align="center") # xerr=std[indices],
+    plt.yticks(range(len(top_importances)), top_names)
+    plt.ylim([-1, len(top_importances)])
+    plt.gca().invert_yaxis()
+    savefig('question_feature_importances.png', transparent=True, bbox_inches='tight')
 
     plt.show()

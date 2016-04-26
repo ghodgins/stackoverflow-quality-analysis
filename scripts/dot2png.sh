@@ -1,0 +1,1 @@
+for file in `ls ./visualized_trees/*.dot`; do dot -Tpng $file -o `echo $file | sed 's/\.dot$/\.png/'`; done

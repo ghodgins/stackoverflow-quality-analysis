@@ -8,6 +8,8 @@ from enchant.checker import SpellChecker
 import re
 import string
 from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from textblob import TextBlob
 
 
 def create_and_generate_features(post):
@@ -15,6 +17,9 @@ def create_and_generate_features(post):
 
 
 class StackOverflowTextAnalysis(object):
+    ENGINEERED_FEATURES_ON = True
+    CHAR_NGRAMS_ON = True
+
     def __init__(self, post):
         self.body = post.get('body')
         assert self.body is not None
@@ -51,10 +56,19 @@ class StackOverflowTextAnalysis(object):
         self.lowercase_percentage = None
         self.uppercase_percentage = None
         self.spaces_count = None
+        self.textblob = None
         self.sentiment = None
+        self.subjectivity = None
         self.is_title_capitalized = None
         self.lines_of_code = None
         self.code_percentage = None
+        self.num_code_tags = None
+        self.num_p_tags = None
+
+        # make a CountVectorizer-style tokenizer
+        self.char_ngrammer = CountVectorizer(
+            analyzer='char', ngram_range=(4, 4)
+        ).build_analyzer()
 
         # regex to find strings of the form example@mail.com
         # unfortunately also matches urls such as //ex@mple.com
@@ -87,35 +101,45 @@ class StackOverflowTextAnalysis(object):
     # prepend sota (abbreviation of StackOverflowTextAnalysis) to each key to
     # ensure that they are unique when combined with other feature sets
     def generate_features(self):
-        features = {
-            "sota_body_length": self.get_body_length(),
-            "sota_spelling_error_count": self.get_spelling_error_count(),
-            "sota_email_count": self.get_email_count(),
-            "sota_url_count": self.get_url_count(),
-            "sota_ari": self.get_ari(),
-            "sota_flesch_reading_ease": self.get_flesch_reading_ease(),
-            "sota_flesch_kincaid_grade": self.get_flesch_kincaid_grade(),
-            "sota_gunning_fog_index": self.get_gunning_fog_index(),
-            "sota_smog_index": self.get_smog_index(),
-            "sota_coleman_liau_index": self.get_coleman_liau_index(),
-            "sota_lix": self.get_lix(),
-            "sota_rix": self.get_rix(),
-            "sota_uppercase_percentage": self.get_uppercase_percentage(),
-            "sota_lowercase_percentage": self.get_lowercase_percentage(),
-            "sota_spaces_count": self.get_spaces_count(),
-            "sota_lines_of_code": self.get_lines_of_code(),
-            "sota_code_percentage": self.get_code_percentage()
-            #"sota_sentiment": self.get_sentiment()
-        }
+        features = {}
 
-        if self.get_title() is not None:
-            title_features = {
-                "sota_title_length": self.get_title_length(),
-                "sota_title_body_similarity": self.get_title_body_similarity(),
-                "sota_is_title_capitalized": self.get_is_title_capitalized()
+        if self.ENGINEERED_FEATURES_ON:
+            features = {
+                "sota_body_length": self.get_body_length(),
+                "sota_spelling_error_count": self.get_spelling_error_count(),
+                "sota_email_count": self.get_email_count(),
+                "sota_url_count": self.get_url_count(),
+                "sota_ari": self.get_ari(),
+                "sota_flesch_reading_ease": self.get_flesch_reading_ease(),
+                "sota_flesch_kincaid_grade": self.get_flesch_kincaid_grade(),
+                "sota_gunning_fog_index": self.get_gunning_fog_index(),
+                "sota_smog_index": self.get_smog_index(),
+                "sota_coleman_liau_index": self.get_coleman_liau_index(),
+                "sota_lix": self.get_lix(),
+                "sota_rix": self.get_rix(),
+                "sota_uppercase_percentage": self.get_uppercase_percentage(),
+                "sota_lowercase_percentage": self.get_lowercase_percentage(),
+                "sota_spaces_count": self.get_spaces_count(),
+                "sota_lines_of_code": self.get_lines_of_code(),
+                "sota_code_percentage": self.get_code_percentage(),
+                "sota_sentiment": self.get_sentiment(),
+                "sota_subjectivity": self.get_subjectivity(),
+                "sota_num_code_tags": self.get_num_code_tags(),
+                "sota_num_p_tags": self.get_num_p_tags()
             }
 
-            features = {**features, **title_features}
+            if self.get_title() is not None:
+                title_features = {
+                    "sota_title_length": self.get_title_length(),
+                    "sota_title_body_similarity": self.get_title_body_similarity(),
+                    "sota_is_title_capitalized": self.get_is_title_capitalized()
+                }
+
+                features = {**features, **title_features}
+
+        if self.CHAR_NGRAMS_ON:
+            for t in self.char_ngrammer(self.get_body()):
+                features[t] = features.get(t, 0) + 1
 
         return features
 
@@ -298,14 +322,20 @@ class StackOverflowTextAnalysis(object):
                     self.spaces_count += 1
         return self.spaces_count
 
+    def get_textblob(self):
+        if self.textblob is None:
+            self.textblob = TextBlob(self.get_body_text())
+        return self.textblob
+
     def get_sentiment(self):
         if self.sentiment is None:
-            self.sentiment = None
+            self.sentiment = self.get_textblob().sentiment.polarity
         return self.sentiment
 
-    def text_speak_count(self):
-        # this or spellcheck errors count???
-        pass
+    def get_subjectivity(self):
+        if self.subjectivity is None:
+            self.subjectivity = self.get_textblob().sentiment.subjectivity
+        return self.subjectivity
 
     def get_title_body_similarity(self):
         if self.title_body_similarity is None:
@@ -315,16 +345,32 @@ class StackOverflowTextAnalysis(object):
         return self.title_body_similarity
 
     def get_lines_of_code(self):
-        # number of lines of code declared between tags <code>
-        bs = BeautifulSoup(self.get_body(), "lxml")
-        code = bs.find_all('code')
-        return ' '.join([c.get_text() for c in code]).count('\n')+1
+        if self.lines_of_code is None:
+            # number of lines of code declared between tags <code>
+            bs = BeautifulSoup(self.get_body(), "lxml")
+            code = bs.find_all('code')
+            self.lines_of_code = ' '.join([c.get_text() for c in code]).count('\n')+1
+        return self.lines_of_code
 
     def get_code_percentage(self):
-        # percentage of lines of code declared between tags <code>
-        lines_of_code = self.get_lines_of_code()
-        lines_of_text = self.get_body().count('\n')+1
-        return (lines_of_code/lines_of_text)*100
+        if self.code_percentage is None:
+            # percentage of lines of code declared between tags <code>
+            lines_of_code = self.get_lines_of_code()
+            lines_of_text = self.get_body().count('\n')+1
+            self.code_percentage = (lines_of_code/lines_of_text)*100
+        return self.code_percentage
+
+    def get_num_code_tags(self):
+        if self.num_code_tags is None:
+            bs = BeautifulSoup(self.get_body(), "lxml")
+            self.num_code_tags = len(bs.find_all('code'))
+        return self.num_code_tags
+
+    def get_num_p_tags(self):
+        if self.num_p_tags is None:
+            bs = BeautifulSoup(self.get_body(), "lxml")
+            self.num_p_tags = len(bs.find_all('p'))
+        return self.num_p_tags
 
     def get_is_title_capitalized(self):
         if self.is_title_capitalized is None:
@@ -381,12 +427,3 @@ class StackOverflowTextAnalysis(object):
         vectorizer = TfidfVectorizer(tokenizer=self.normalize, stop_words='english')
         tfidf = vectorizer.fit_transform([text1, text2])
         return ((tfidf * tfidf.T).A)[0, 1]
-
-    def avg_term_entropy(self):
-        # avg entropy of terms in a question,
-        # according to the SO entropy index we devised.
-        # Each term’s entropy is calculated on the SO dataset.
-        pass
-
-    def metric_entropy():
-        pass
