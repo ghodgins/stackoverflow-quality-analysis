@@ -119,10 +119,7 @@ if __name__ == '__main__':
         finished_fit_transform_time - start_fit_transform_time
     ))
 
-    Y = np.array(
-        ['verybad'] * len(verybad_head) + ['bad'] * len(bad_head) + \
-        ['good'] * len(good_head) + ['verygood'] * len(verygood_head)
-    )
+    Y = np.array(['bad'] * (len(verybad_head)+len(bad_head)) + ['good'] * (len(good_head)+len(verygood_head)))
 
     print(Y.shape)
 

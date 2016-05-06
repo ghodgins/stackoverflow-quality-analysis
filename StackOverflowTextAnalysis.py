@@ -24,10 +24,13 @@ class StackOverflowTextAnalysis(object):
         self.body = post.get('body')
         assert self.body is not None
         self.title = post.get('title')
+        self.parent_title = post.get('parent_title')
+        self.parent_body = post.get('parent_body')
         self.body_length = None
         self.title_body_similarity = None
         self.title_length = None
         self.body_text = None
+        self.parent_body_text = None
         self.words = None
         self.sentences = None
         self.character_count = None
@@ -64,10 +67,12 @@ class StackOverflowTextAnalysis(object):
         self.code_percentage = None
         self.num_code_tags = None
         self.num_p_tags = None
+        self.answer_question_body_similarity = None
 
         # make a CountVectorizer-style tokenizer
         self.char_ngrammer = CountVectorizer(
-            analyzer='char', ngram_range=(4, 4)
+            analyzer='char', ngram_range=(3, 4)
+            #ngram_range=(1,3)
         ).build_analyzer()
 
         # regex to find strings of the form example@mail.com
@@ -106,6 +111,7 @@ class StackOverflowTextAnalysis(object):
         if self.ENGINEERED_FEATURES_ON:
             features = {
                 "sota_body_length": self.get_body_length(),
+                "sota_body_text_length": self.get_body_text_length(),
                 "sota_spelling_error_count": self.get_spelling_error_count(),
                 "sota_email_count": self.get_email_count(),
                 "sota_url_count": self.get_url_count(),
@@ -137,6 +143,13 @@ class StackOverflowTextAnalysis(object):
 
                 features = {**features, **title_features}
 
+            if self.get_parent_title() is not None:
+                parent_features = {
+                    "sota_answer_question_body_similarity": self.get_answer_question_body_similarity()
+                }
+
+                features = {**features, **parent_features}
+
         if self.CHAR_NGRAMS_ON:
             for t in self.char_ngrammer(self.get_body()):
                 features[t] = features.get(t, 0) + 1
@@ -153,6 +166,17 @@ class StackOverflowTextAnalysis(object):
         if self.body_text is None:
             self.body_text = BeautifulSoup(self.get_body(), "lxml").get_text()
         return self.body_text
+
+    def get_parent_title(self):
+        return self.parent_title
+
+    def get_parent_body(self):
+        return self.parent_body
+
+    def get_parent_body_text(self):
+        if self.parent_body_text is None:
+            self.parent_body_text = BeautifulSoup(self.get_parent_body(), "lxml").get_text()
+        return self.parent_body_text
 
     def get_words(self):
         if self.words is None:
@@ -180,6 +204,11 @@ class StackOverflowTextAnalysis(object):
         return self.sentence_count
 
     def get_body_length(self):
+        if self.body_length is None:
+            self.body_length = len(self.get_body())
+        return self.body_length
+
+    def get_body_text_length(self):
         if self.body_length is None:
             self.body_length = len(self.get_body_text())
         return self.body_length
@@ -249,10 +278,10 @@ class StackOverflowTextAnalysis(object):
         return self.flesch_reading_ease
 
     def get_flesch_kincaid_grade(self):
-        if self.flesch_reading_ease is None:
-            self.flesch_reading_ease = 0.39 * self.get_avg_words_per_sentence() + 11.8 * \
+        if self.flesch_kincaid_grade is None:
+            self.flesch_kincaid_grade = 0.39 * self.get_avg_words_per_sentence() + 11.8 * \
                 (self.get_total_syllable_count() / self.get_word_count()) - 15.59
-        return self.flesch_reading_ease
+        return self.flesch_kincaid_grade
 
     def get_gunning_fog_index(self):
         if self.gunning_fog_index is None:
@@ -343,6 +372,13 @@ class StackOverflowTextAnalysis(object):
                 self.get_title(), self.get_body_text()
             )
         return self.title_body_similarity
+
+    def get_answer_question_body_similarity(self):
+        if self.answer_question_body_similarity is None:
+            self.answer_question_body_similarity = self.cosine_sim(
+                self.get_body_text(), self.get_parent_body_text()
+            )
+        return self.answer_question_body_similarity
 
     def get_lines_of_code(self):
         if self.lines_of_code is None:

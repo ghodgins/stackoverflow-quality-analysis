@@ -1,0 +1,72 @@
+$ perl texWordCount.pl Thesis.tex
+# Copyright 2002, 2007, 2009 � by Min-Yen Kan; modified by Sam Tygier, 2007; by Gregor Heinrich, 2008; by Martin Magnusson, 2009; by Edward Vigmond, 2009
+# LaTeX word count file format 090326 produced by texWordCount.pl
+# run as "texWordCount.pl Thesis.tex"
+# format: \t x level of detail, number of words \t section name
+12341	whole - Thesis.tex
+	227	(Before Chapter 1)
+	643	Chapter 1 - Introduction} \label{introduction
+		178	Section 1 - What Is the Purpose Of This Dissertation?
+		263	Section 2 - Why Classify Question and Answer Quality?
+		200	Section 3 - Roadmap
+	1289	Chapter 2 - Related Works} \label{relatedworks
+		341	Section 1 - Classifying Question Quality
+		350	Section 2 - Insight into Successful Answers
+		269	Section 3 - Quality Code, Quality Question
+		222	Section 4 - Emojis and Hedging Affecting Perception of Quality
+	6748	Chapter 3 - Methodology} \label{methodology
+		2453	Section 1 - Data} \label{data
+			177	Subsection 1 - Where to Find the Dataset?} \label{WhereToFindTheDataset
+			135	Subsection 2 - What is in the Dataset?} \label{WhatIsInTheDataset
+			444	Subsection 3 - Why Use this Dataset?} \label{WhyUseThisDataset
+			555	Subsection 4 - Managing the Dataset} \label{ManagingTheDataset
+			392	Subsection 5 - Generating Sub-Datasets for Analysis
+			720	Subsection 6 - Insights Into The Data} \label{InsightsIntoTheData
+				234	Subsubsection 6 - Zipf's Law and Hapax Legomenon
+		217	Section 2 - Machine Learning
+			60	Subsection 1 - Supervised Learning
+		254	Section 3 - Document Classification
+		880	Section 4 - Data Representation
+			16	Subsection 1 - Representing Numerical Data
+			115	Subsection 2 - Representing Categorical Information
+			572	Subsection 3 - Representing Text
+		1148	Section 5 - Feature Engineering and Extraction
+			994	Subsection 1 - Readability Indexes
+				15	Subsubsection 1 - Automated Readability Index (ARI)
+				152	Subsubsection 1 - Flesch Reading Ease
+				142	Subsubsection 1 - Flesch-Kincaid Grade
+				194	Subsubsection 1 - Gunning Fog Index
+				79	Subsubsection 1 - SMOG Index
+				155	Subsubsection 1 - Coleman Liau Index
+				215	Subsubsection 1 - LIX \& RIX
+			5	Subsection 2 - Text Similarity
+			6	Subsection 3 - Text Vectorization: Character N-Grams
+		5	Section 6 - Normalising/Post-Processing
+		252	Section 7 - Decision/Classification Trees
+		294	Section 8 - Random Forests
+		1057	Section 9 - Methods of Evaluation
+			563	Subsection 1 - Performance Measures
+			261	Subsection 2 - Computational Complexity
+			160	Subsection 3 - Statistical Significance in Machine Learning
+	850	Chapter 4 - Implementation} \label{implementation
+		325	Section 1 - Databases/Postgres
+		89	Section 2 - Important Libraries
+		262	Section 3 - Machine Learning Pipeline
+			20	Subsection 1 - Question Quality Decision Tree Visualization
+			199	Subsection 2 - Feature Extraction/Engineering
+	995	Chapter 5 - Results} \label{results
+		83	Section 1 - Predicting the Quality of Questions
+		83	Section 2 - Predicting the Quality of Answers
+		786	Section 3 - Feature Distributions for Questions and Answers
+	513	Chapter 6 - Evaluation} \label{evaluation
+		12	Section 1 - Predicting the Quality of Questions
+		158	Section 2 - Predicting the Quality of Answers
+		258	Section 3 - What else did we learn?
+	867	Chapter 7 - Discussion} \label{discussion
+		66	Section 1 - Further Work
+		50	Section 2 - Security Considerations as an Aside
+		110	Section 3 - Magic Number of a Quality Question or Answer
+		345	Section 4 - Machine Learning Research That Matters
+		278	Section 5 - Models For Validation
+	196	Chapter 8 - Conclusion} \label{conclusion
+	13	Chapter 9 - An Appendix

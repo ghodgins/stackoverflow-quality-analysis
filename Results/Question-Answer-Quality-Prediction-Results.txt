@@ -1,0 +1,412 @@
+
+
+
+Question Quality - Character Ngrams and Engineered Features:
+=============================================================
+$ python QuestionQualityAnalysis.py
+Loading data took 0.48044824600219727 seconds.
+Generating features took 274.3382668495178 seconds.
+(19600, 576692)
+Fit transform took 14.19551396369934 seconds.
+(19600,)
+Cross Validation splitting took 0.518190860748291 seconds.
+Normalising took 4.76837158203125e-07 seconds.
+Model Training took 15.513782024383545 seconds.
+Predicting took 1.4376559257507324 seconds.
+Model Scoring took 0.008564949035644531 seconds.
+
+             precision    recall  f1-score   support
+
+    verybad       0.42      0.13      0.20      1470
+        bad       0.42      0.38      0.39      1470
+       good       0.41      0.64      0.50      1470
+   verygood       0.53      0.65      0.58      1470
+
+avg / total       0.44      0.45      0.42      5880
+
+Feature ranking:
+1. /cod (0.014462)
+2. </co (0.010844)
+3.  <co (0.009883)
+4. > <p (0.009357)
+5. ode> (0.009351)
+6. sota_num_code_tags (0.008688)
+7. ="no (0.008025)
+8. sota_flesch_reading_ease (0.007347)
+9. sota_ari (0.007136)
+10. <a h (0.006819)
+11. w">h (0.006735)
+12. sota_body_length (0.006553)
+13. </p> (0.006547)
+14. sota_num_p_tags (0.006402)
+15. sota_lines_of_code (0.005863)
+16. atio (0.005697)
+17. sota_smog_index (0.005653)
+18. sota_rix (0.005500)
+19. with (0.005391)
+20. sota_spaces_count (0.005095)
+21. href (0.005044)
+22. l="n (0.004966)
+23. com/ (0.004799)
+24. re>< (0.004785)
+25.  <p> (0.004767)
+26. ng < (0.004732)
+27. tp:/ (0.004533)
+28. ow"> (0.004451)
+29. sota_lix (0.004171)
+30. e> < (0.004128)
+31. " re (0.004053)
+32. ment (0.004041)
+33. sota_coleman_liau_index (0.003976)
+34. ><co (0.003800)
+35. pre> (0.003697)
+36. conf (0.003565)
+37. p> < (0.003561)
+38. <pre (0.003276)
+39. ?</p (0.003201)
+40.  <a  (0.003179)
+41. sota_url_count (0.003109)
+42. e <c (0.003074)
+43. > an (0.003062)
+44. e></ (0.003014)
+45. e>,  (0.002949)
+46. thin (0.002933)
+47. low" (0.002926)
+48. way  (0.002873)
+49. "htt (0.002793)
+50. de>  (0.002750)
+51. t</c (0.002663)
+52. de>c (0.002637)
+53. <cod (0.002630)
+54. re>  (0.002617)
+55. sota_gunning_fog_index (0.002551)
+56. <p>a (0.002539)
+57. e> i (0.002532)
+58.  rel (0.002489)
+59. e</c (0.002484)
+60. el=" (0.002483)
+61. ems  (0.002473)
+62. ion  (0.002466)
+63. fine (0.002462)
+64. e>.  (0.002396)
+65. not  (0.002393)
+66. ever (0.002370)
+67. does (0.002344)
+68.  to  (0.002329)
+69.  hre (0.002320)
+70. ></p (0.002290)
+71. /pre (0.002279)
+72. over (0.002272)
+73. .com (0.002246)
+74. y to (0.002246)
+75. :</p (0.002234)
+76. ded  (0.002213)
+77. de>< (0.002205)
+78.  fol (0.002182)
+79. mysq (0.002129)
+80.  thi (0.002097)
+81.  way (0.002093)
+82. howe (0.002076)
+83. p>is (0.002074)
+84.  <pr (0.002046)
+85.  xco (0.001985)
+86. t <c (0.001979)
+87. p>i' (0.001948)
+88. <p>i (0.001942)
+89. e> a (0.001940)
+90. ps:/ (0.001935)
+91. code (0.001927)
+92. tion (0.001902)
+93. sota_code_percentage (0.001865)
+94. tps: (0.001857)
+95. owin (0.001851)
+96. this (0.001841)
+97. , bu (0.001815)
+98. nsta (0.001813)
+99.
+</c (0.001809)
+100. sota_flesch_kincaid_grade (0.001790)
+
+Confusion matrix, without normalization
+[[195 372 704 199]
+ [ 91 552 335 492]
+ [135 232 935 168]
+ [ 44 172 296 958]]
+
+Normalized confusion matrix
+[[ 0.13  0.25  0.48  0.14]
+ [ 0.06  0.38  0.23  0.33]
+ [ 0.09  0.16  0.64  0.11]
+ [ 0.03  0.12  0.2   0.65]]
+=============================================================
+
+
+
+Question Quality - Engineered Features:
+=============================================================
+$ python QuestionQualityAnalysis.py
+Loading data took 0.4753241539001465 seconds.
+Generating features took 277.0719211101532 seconds.
+(19600, 24)
+Fit transform took 0.5559253692626953 seconds.
+(19600,)
+Cross Validation splitting took 0.020821809768676758 seconds.
+Normalising took 4.76837158203125e-07 seconds.
+Model Training took 1.477790355682373 seconds.
+Predicting took 0.11197853088378906 seconds.
+Model Scoring took 0.009982585906982422 seconds.
+
+             precision    recall  f1-score   support
+
+    verybad       0.39      0.24      0.30      1470
+        bad       0.39      0.33      0.36      1470
+       good       0.42      0.57      0.49      1470
+   verygood       0.44      0.51      0.47      1470
+
+avg / total       0.41      0.41      0.40      5880
+
+Feature ranking:
+1. sota_num_code_tags (0.128970)
+2. sota_body_length (0.081900)
+3. sota_num_p_tags (0.079822)
+4. sota_lowercase_percentage (0.066609)
+5. sota_spaces_count (0.059963)
+6. sota_coleman_liau_index (0.056273)
+7. sota_smog_index (0.041685)
+8. sota_title_body_similarity (0.039954)
+9. sota_flesch_kincaid_grade (0.038300)
+10. sota_spelling_error_count (0.037617)
+11. sota_code_percentage (0.037556)
+12. sota_flesch_reading_ease (0.037372)
+13. sota_title_length (0.033913)
+14. sota_rix (0.033286)
+15. sota_url_count (0.033160)
+16. sota_lix (0.032234)
+17. sota_ari (0.031829)
+18. sota_uppercase_percentage (0.031819)
+19. sota_gunning_fog_index (0.030809)
+20. sota_lines_of_code (0.027697)
+21. sota_subjectivity (0.019935)
+22. sota_sentiment (0.017838)
+23. sota_is_title_capitalized (0.001457)
+24. sota_email_count (0.000000)
+
+Confusion matrix, without normalization
+[[355 256 583 276]
+ [177 491 302 500]
+ [254 192 843 181]
+ [122 331 271 746]]
+
+Normalized confusion matrix
+[[ 0.24  0.17  0.4   0.19]
+ [ 0.12  0.33  0.21  0.34]
+ [ 0.17  0.13  0.57  0.12]
+ [ 0.08  0.23  0.18  0.51]]
+
+=============================================================
+
+
+
+Answer Quality - Character Ngrams and Engineered Features:
+=============================================================
+$ python AnswerQualityAnalysis.py
+
+Loading data took 0.6249709129333496 seconds.
+Generating features took 236.56457233428955 seconds.
+(19600, 383430)
+Fit transform took 9.276973962783813 seconds.
+(19600,)
+Cross Validation splitting took 0.3084688186645508 seconds.
+Normalising took 2.384185791015625e-07 seconds.
+Model Training took 6.011439561843872 seconds.
+Predicting took 0.8177034854888916 seconds.
+Model Scoring took 0.00862431526184082 seconds.
+
+             precision    recall  f1-score   support
+
+    verybad       0.37      0.16      0.22      1470
+        bad       0.47      0.28      0.35      1470
+       good       0.37      0.55      0.44      1470
+   verygood       0.47      0.70      0.56      1470
+
+avg / total       0.42      0.42      0.39      5880
+
+Feature ranking:
+1. "nof (0.016668)
+2. ow"> (0.013916)
+3. p> < (0.010880)
+4. el=" (0.010803)
+5. ="no (0.010177)
+6. sota_num_code_tags (0.009962)
+7. code (0.009001)
+8. rel= (0.008901)
+9. e></ (0.008540)
+10. the  (0.008519)
+11.  <co (0.008260)
+12.  <p> (0.007936)
+13. " re (0.007856)
+14. <cod (0.007695)
+15. </co (0.007658)
+16. /p>  (0.007573)
+17. > <p (0.006949)
+18.  <a  (0.006784)
+19.  rel (0.006236)
+20. sota_spaces_count (0.006019)
+21. p>th (0.005807)
+22. d th (0.005639)
+23. ollo (0.005624)
+24. "htt (0.005557)
+25. :</p (0.005404)
+26. de>. (0.005282)
+27.  the (0.005229)
+28. ref= (0.005156)
+29. nofo (0.004959)
+30. w">h (0.004959)
+31. sota_lines_of_code (0.004559)
+32. that (0.004494)
+33. de>  (0.004475)
+34.  tha (0.004464)
+35. llow (0.004408)
+36. foll (0.004400)
+37. pre> (0.004226)
+38. )</c (0.004204)
+39. ><co (0.004161)
+40. >
+</ (0.004146)
+41. ode> (0.004140)
+42. /a>  (0.004025)
+43. e>.  (0.003727)
+44. o th (0.003640)
+45.  be  (0.003605)
+46. sota_lix (0.003576)
+47. ="ht (0.003571)
+48.  of  (0.003483)
+49. http (0.003478)
+50. ed t (0.003419)
+51.  wit (0.003371)
+52. ></p (0.003357)
+53. defa (0.003349)
+54. sota_body_length (0.003309)
+55. de>s (0.003272)
+56. de>, (0.003267)
+57. sota_coleman_liau_index (0.003260)
+58. s <c (0.003249)
+59. and  (0.003227)
+60. em>  (0.003224)
+61. sota_ari (0.003204)
+62. ent  (0.003137)
+63. de>< (0.003106)
+64. t</c (0.003097)
+65. e> < (0.003070)
+66. .</p (0.003050)
+67. he < (0.003047)
+68. hich (0.003042)
+69. tp:/ (0.003035)
+70. <a h (0.002986)
+71. >the (0.002923)
+72. re>  (0.002917)
+73. s</c (0.002916)
+74. e>,  (0.002893)
+75. /blo (0.002887)
+76. o <c (0.002880)
+77.  for (0.002877)
+78.  as  (0.002804)
+79. <em> (0.002785)
+80. kquo (0.002769)
+81. ting (0.002754)
+82. sota_smog_index (0.002729)
+83. /cod (0.002706)
+84. ttp: (0.002684)
+85. com/ (0.002608)
+86. ckqu (0.002577)
+87. .org (0.002552)
+88. f th (0.002549)
+89. s an (0.002529)
+90. > in (0.002512)
+91. s th (0.002486)
+92. /pre (0.002479)
+93. s:// (0.002460)
+94. atio (0.002446)
+95. of < (0.002444)
+96.
+<li (0.002381)
+97. a hr (0.002376)
+98. </p> (0.002357)
+99. de>c (0.002343)
+100.  hre (0.002329)
+
+Confusion matrix, without normalization
+[[ 229  231  696  314]
+ [ 151  409  349  561]
+ [ 179  195  811  285]
+ [  56   36  346 1032]]
+
+Normalized confusion matrix
+[[ 0.16  0.16  0.47  0.21]
+ [ 0.1   0.28  0.24  0.38]
+ [ 0.12  0.13  0.55  0.19]
+ [ 0.04  0.02  0.24  0.7 ]]
+=============================================================
+
+
+
+Answer Quality - Engineered Features:
+=============================================================
+$ python AnswerQualityAnalysis.py
+Loading data took 0.619412899017334 seconds.
+Generating features took 239.9688436985016 seconds.
+(19600, 22)
+Fit transform took 0.5072801113128662 seconds.
+(19600,)
+Cross Validation splitting took 0.019651412963867188 seconds.
+Normalising took 7.152557373046875e-07 seconds.
+Model Training took 1.5746533870697021 seconds.
+Predicting took 0.10553932189941406 seconds.
+Model Scoring took 0.008324861526489258 seconds.
+
+             precision    recall  f1-score   support
+
+    verybad       0.31      0.21      0.25      1470
+        bad       0.31      0.24      0.27      1470
+       good       0.35      0.48      0.41      1470
+   verygood       0.41      0.49      0.44      1470
+
+avg / total       0.35      0.35      0.34      5880
+
+Feature ranking:
+1. sota_num_code_tags (0.201299)
+2. sota_body_length (0.105185)
+3. sota_spaces_count (0.075118)
+4. sota_num_p_tags (0.058379)
+5. sota_lix (0.045742)
+6. sota_lowercase_percentage (0.044291)
+7. sota_coleman_liau_index (0.044213)
+8. sota_answer_question_body_similarity (0.042451)
+9. sota_code_percentage (0.038889)
+10. sota_rix (0.037683)
+11. sota_gunning_fog_index (0.036434)
+12. sota_uppercase_percentage (0.034097)
+13. sota_ari (0.033253)
+14. sota_smog_index (0.030848)
+15. sota_subjectivity (0.029084)
+16. sota_flesch_reading_ease (0.028530)
+17. sota_url_count (0.028047)
+18. sota_flesch_kincaid_grade (0.026090)
+19. sota_sentiment (0.021388)
+20. sota_spelling_error_count (0.020419)
+21. sota_lines_of_code (0.018560)
+22. sota_email_count (0.000000)
+
+Confusion matrix, without normalization
+[[306 278 640 246]
+ [212 354 340 564]
+ [304 230 707 229]
+ [155 293 306 716]]
+
+Normalized confusion matrix
+[[ 0.21  0.19  0.44  0.17]
+ [ 0.14  0.24  0.23  0.38]
+ [ 0.21  0.16  0.48  0.16]
+ [ 0.11  0.2   0.21  0.49]]
+
+=============================================================

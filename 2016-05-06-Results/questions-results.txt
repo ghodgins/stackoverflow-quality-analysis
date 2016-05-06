@@ -1,0 +1,135 @@
+$ python QuestionQualityAnalysis.py 
+Loading data took 0.48797011375427246 seconds.
+Generating features took 284.62504839897156 seconds.
+(19600, 692936)
+Fit transform took 24.364259481430054 seconds.
+(19600,)
+Cross Validation splitting took 0.45176267623901367 seconds.
+Normalising took 4.76837158203125e-07 seconds.
+Model Training took 55.04311943054199 seconds.
+Predicting took 2.9347987174987793 seconds.
+Model Scoring took 0.008544683456420898 seconds.
+             precision    recall  f1-score   support
+
+    verybad       0.37      0.22      0.28      1470
+        bad       0.43      0.42      0.42      1470
+       good       0.44      0.60      0.51      1470
+   verygood       0.58      0.61      0.59      1470
+
+avg / total       0.45      0.46      0.45      5880
+
+Feature ranking:
+1. sota_flesch_reading_ease (0.001266)
+2. sota_body_length (0.001198)
+3. sota_body_text_length (0.001194)
+4. &lt;/c (0.001167)
+5. sota_spaces_count (0.001140)
+6. de&gt; (0.001039)
+7. sota_smog_index (0.001009)
+8. sota_ari (0.001005)
+9. sota_title_body_similarity (0.001000)
+10. sota_coleman_liau_index (0.000995)
+11. sota_gunning_fog_index (0.000990)
+12. sota_lowercase_percentage (0.000988)
+13. sota_lix (0.000958)
+14. sota_rix (0.000935)
+15. &lt;cod (0.000875)
+16. &lt;/p&gt; (0.000854)
+17. sota_title_length (0.000851)
+18. /cod (0.000842)
+19. sota_code_percentage (0.000842)
+20. sota_flesch_kincaid_grade (0.000838)
+21. sota_subjectivity (0.000833)
+22. sota_uppercase_percentage (0.000826)
+23. sota_num_p_tags (0.000816)
+24. e&gt;  (0.000800)
+25. cod (0.000796)
+26. &lt;/p (0.000789)
+27. &lt;co (0.000785)
+28.  the (0.000758)
+29. &gt;&lt;/ (0.000758)
+30. sota_sentiment (0.000756)
+31. ode&gt; (0.000747)
+32.  th (0.000747)
+33. p&gt;  (0.000746)
+34. sota_spelling_error_count (0.000714)
+35. =&quot;n (0.000709)
+36. code (0.000698)
+37. p&gt; &lt; (0.000698)
+38. ode (0.000694)
+39. &lt;p&gt; (0.000681)
+40. /co (0.000679)
+41. &gt; &lt;p (0.000679)
+42. sota_num_code_tags (0.000663)
+43.  &lt;p (0.000660)
+44. the  (0.000630)
+45. he  (0.000626)
+46. &quot;nof (0.000623)
+47.  &lt;p&gt; (0.000622)
+48. &gt; &lt; (0.000619)
+49. ow&quot; (0.000610)
+50. ing (0.000601)
+51. &lt;/co (0.000598)
+52. ?&lt;/ (0.000596)
+53.  &lt;c (0.000593)
+54. the (0.000591)
+55. ion (0.000590)
+56. ow&quot;&gt; (0.000578)
+57. /a&gt; (0.000574)
+58. sota_lines_of_code (0.000568)
+59.  in (0.000565)
+60. &gt;&lt;/p (0.000561)
+61. on  (0.000551)
+62. de&gt;&lt; (0.000537)
+63.  to (0.000532)
+64. ing  (0.000519)
+65. is  (0.000519)
+66. /p&gt;  (0.000518)
+67.  to  (0.000517)
+68. nofo (0.000517)
+69. ng  (0.000515)
+70. tio (0.000514)
+71.  &lt;co (0.000513)
+72. w&quot;&gt; (0.000512)
+73. e&gt; &lt; (0.000511)
+74. /p&gt; (0.000495)
+75. low (0.000494)
+76. e&gt;&lt; (0.000485)
+77. tion (0.000479)
+78. p&gt;i (0.000479)
+79.  a  (0.000474)
+80. =&quot;h (0.000472)
+81. :&lt;/ (0.000471)
+82. nof (0.000471)
+83. and (0.000471)
+84. ed  (0.000470)
+85. .&lt;/p (0.000467)
+86. &quot;no (0.000464)
+87. s t (0.000464)
+88. &gt;&lt;co (0.000463)
+89. &quot;ht (0.000463)
+90. el=&quot; (0.000463)
+91. nd  (0.000460)
+92. to  (0.000460)
+93. es  (0.000456)
+94.  is  (0.000453)
+95. n t (0.000453)
+96. 
+&lt;/c (0.000453)
+97. le  (0.000447)
+98.  an (0.000446)
+99. ent (0.000445)
+100. her (0.000441)
+Confusion matrix, without normalization
+[[324 369 630 147]
+ [187 613 291 379]
+ [266 189 887 128]
+ [ 91 259 227 893]]
+/home/ghodgins/anaconda3/lib/python3.5/site-packages/matplotlib/figure.py:1744: UserWarning: This figure includes Axes that are not compatible with tight_layout, so its results might be incorrect.
+  warnings.warn("This figure includes Axes that are not "
+Normalized confusion matrix
+[[ 0.22  0.25  0.43  0.1 ]
+ [ 0.13  0.42  0.2   0.26]
+ [ 0.18  0.13  0.6   0.09]
+ [ 0.06  0.18  0.15  0.61]]
+
