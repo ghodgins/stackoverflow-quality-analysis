@@ -161,14 +161,14 @@ if __name__ == '__main__':
     '''
 
     clf = RandomForestClassifier(
-        n_estimators=1000, n_jobs=6, oob_score=True, random_state=50#, max_depth=7
+        n_estimators=100, n_jobs=6, oob_score=True, random_state=50,# max_depth=7
     )
 
     '''
     cv = StratifiedKFold(Y)
 
     score, permutation_scores, pvalue = permutation_test_score(
-        clf, X, Y, scoring="accuracy", cv=cv, n_permutations=50, n_jobs=3
+        clf, X, Y, scoring="accuracy", cv=cv, n_permutations=100, n_jobs=3
     )
 
     print("Classification score %s (pvalue : %s)" % (score, pvalue))

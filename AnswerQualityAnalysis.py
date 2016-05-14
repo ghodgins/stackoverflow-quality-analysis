@@ -175,34 +175,12 @@ if __name__ == '__main__':
     cv = StratifiedKFold(Y)
 
     score, permutation_scores, pvalue = permutation_test_score(
-        clf, X, Y, scoring="accuracy", cv=cv, n_permutations=50, n_jobs=3
+        clf, X, Y, scoring="accuracy", cv=cv, n_permutations=100, n_jobs=3
     )
 
     print("Classification score %s (pvalue : %s)" % (score, pvalue))
 
     print(permutation_scores)
-    '''
-
-    '''
-    ###############################################################################
-    # View histogram of permutation scores
-    plt.hist(permutation_scores, 20, label='Permutation scores')
-    ylim = plt.ylim()
-    # BUG: vlines(..., linestyle='--') fails on older versions of matplotlib
-    #plt.vlines(score, ylim[0], ylim[1], linestyle='--',
-    #          color='g', linewidth=3, label='Classification Score'
-    #          ' (pvalue %s)' % pvalue)
-    #plt.vlines(1.0 / n_classes, ylim[0], ylim[1], linestyle='--',
-    #          color='k', linewidth=3, label='Luck')
-    plt.plot(2 * [score], ylim, '--g', linewidth=3,
-             label='Classification Score'
-             ' (pvalue %s)' % pvalue)
-    plt.plot(2 * [1. / n_classes], ylim, '--k', linewidth=3, label='Luck')
-
-    plt.ylim(ylim)
-    plt.legend()
-    plt.xlabel('Score')
-    plt.show()
     '''
 
     clf = clf.fit(X_train, Y_train)

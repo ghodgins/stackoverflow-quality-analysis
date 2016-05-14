@@ -1,9 +1,0 @@
-Blues From Confusion Matrix
-===============================
-Blue 3: #539DCC
-
-Blue 2: #418DC3
-
-Blue 1: #D1E2F3
-
-Blue 0: #AED0E5

@@ -35,7 +35,7 @@ def plot_confusion_matrix(cm, labels, title='Confusion matrix', cmap=plt.cm.Blue
     plt.xlabel('Predicted label')
 
 if __name__ == '__main__':
-    labels = ['verybad', 'bad', 'good', 'verygood']
+    labels = ['bad', 'good']
 
     verybad_head = []
     bad_head = []

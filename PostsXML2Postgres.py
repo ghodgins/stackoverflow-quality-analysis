@@ -148,8 +148,7 @@ if __name__ == '__main__':
                         print('Pre-processing ...')
                         cur.execute(create_table_sql)
                         conn.commit()
-                        print(
-                            'Pre-processing took {} seconds'.format(time.time() - start_time))
+                        print('Pre-processing took {} seconds'.format(time.time() - start_time))
 
                         # Handle content of the table
                         start_time = time.time()
@@ -164,20 +163,17 @@ if __name__ == '__main__':
                                 cur.execute(cmd)
                                 conn.commit()
 
-                        print(
-                            'Table processing took {} seconds'.format(time.time() - start_time))
+                        print('Table processing took {} seconds'.format(time.time() - start_time))
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
                         print('Post processing ...')
                         cur.execute(create_indexes_sql)
                         conn.commit()
-                        print(
-                            'Post processing took {} seconds'.format(time.time() - start_time))
+                        print('Post processing took {} seconds'.format(time.time() - start_time))
 
                 except IOError as e:
-                    print("Could not read from file {}.".format(
-                        posts), file=sys.stderr)
+                    print("Could not read from file {}.".format(posts), file=sys.stderr)
                     print("IOError: {0}".format(e.strerror), file=sys.stderr)
     except pg.Error as e:
         print("Error in dealing with the database.", file=sys.stderr)

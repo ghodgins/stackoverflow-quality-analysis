@@ -30,6 +30,7 @@ class StackOverflowTextAnalysis(object):
         self.title_body_similarity = None
         self.title_length = None
         self.body_text = None
+        self.body_text_length = None
         self.parent_body_text = None
         self.words = None
         self.sentences = None
@@ -154,6 +155,11 @@ class StackOverflowTextAnalysis(object):
             for t in self.char_ngrammer(self.get_body()):
                 features[t] = features.get(t, 0) + 1
 
+            if self.get_title() is not None:
+                for t in self.char_ngrammer(self.get_title()):
+                    title_t = "t_" + t
+                    features[title_t] = features.get(title_t, 0) + 1
+
         return features
 
     def get_body(self):
@@ -209,9 +215,9 @@ class StackOverflowTextAnalysis(object):
         return self.body_length
 
     def get_body_text_length(self):
-        if self.body_length is None:
-            self.body_length = len(self.get_body_text())
-        return self.body_length
+        if self.body_text_length is None:
+            self.body_text_length = len(self.get_body_text())
+        return self.body_text_length
 
     def get_title_length(self):
         if self.title_length is None:
